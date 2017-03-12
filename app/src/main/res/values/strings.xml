@@ -1,0 +1,49 @@
+<resources>
+    <string name="app_name">微伴侣</string>
+
+    <string name="title_main">首页</string>
+    <string name="title_settings">设置</string>
+    <string name="title_sign_in">登录</string>
+    <string name="title_text_preview">文字预览</string>
+
+    <string name="welcome">您好！%1$s</string>
+    <string name="date">今天是 yyyy-MM-dd    EEEE</string>
+
+    <string name="picker_title">选择图片</string>
+
+    <string name="username">账号</string>
+    <string name="password">密码</string>
+    <string name="username_required">请输入账号</string>
+    <string name="password_required">请输入密码</string>
+    <string name="visit">第一次使用%1$s    访问官网</string>
+    <string name="sign_in_failed">登录失败</string>
+
+    <string name="intro">应用简介</string>
+    <string name="about">关于我们</string>
+    <string name="service">客服咨询</string>
+    <string name="modify_password">修改密码</string>
+    <string name="wipe_clean">清除缓存</string>
+    <string name="sign_out">退出帐号</string>
+
+    <string name="current_password">当前密码</string>
+    <string name="new_password">新密码</string>
+    <string name="renew_password">重复新密码</string>
+    <string name="current_password_required">请输入当前密码</string>
+    <string name="new_password_required">请输入新密码</string>
+    <string name="renew_password_required">请输入重复新密码</string>
+    <string name="password_not_match">两次密码不一致</string>
+
+    <string name="child_count">共%1$d条记录</string>
+
+    <string name="error_io">请求失败，请检查网络连接</string>
+    <string name="error_unknown">未知异常，请联系管理员</string>
+
+    <string name="permission_request_title">权限申请</string>
+    <string name="permission_request_external_storage_message">在设置设置-应用-%1$s-权限中开启存储空间权限，以正常使用%1$s功能</string>
+
+    <string name="action_settings">去设置</string>
+    <string name="action_wipe_cache_message">确定清除本地缓存</string>
+
+    <string name="wechat_app_not_installed">[微信]客户端尚未安装！无法进行分享！</string>
+    <string name="data_is_not_ready">数据未准备好！</string>
+</resources>

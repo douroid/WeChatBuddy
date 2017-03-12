@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="10dp">
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/top_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dialog"
+        android:orientation="vertical"
+        app:divider="@drawable/divider_in_dialog"
+        app:showDividers="middle">
+
+        <TextView
+            android:id="@+id/album"
+            style="@style/Widget.TextView.Dialog"
+            android:text="选取相册照片"
+            android:textColor="#f000" />
+
+        <TextView
+            android:id="@+id/take"
+            style="@style/Widget.TextView.Dialog"
+            android:text="现在拍一张"
+            android:textColor="#f000" />
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_layout"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_dialog"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/cancel"
+            style="@style/Widget.TextView.Dialog"
+            android:text="取消"
+            android:textColor="#f000" />
+    </LinearLayout>
+
+</RelativeLayout>

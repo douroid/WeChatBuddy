@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <uk.co.senab.photoview.PhotoView
+        android:id="@+id/photo_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:scaleType="center"
+        tools:background="#f000" />
+
+    <android.support.design.widget.AppBarLayout style="@style/Widget.AppBarLayout">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/Widget.Toolbar"
+            app:navigationIcon="@drawable/ic_nav_back">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/Widget.Toolbar.Title" />
+
+            <ImageButton
+                android:id="@+id/send"
+                style="@style/Widget.Toolbar.Button.Navigation"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_nav_send"
+                tools:ignore="contentDescription" />
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+</merge>

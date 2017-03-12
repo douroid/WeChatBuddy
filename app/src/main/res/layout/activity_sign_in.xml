@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:orientation="vertical"
+        android:paddingLeft="35dp"
+        android:paddingRight="35dp"
+        android:paddingTop="60dp">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/username_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterEnabled="false"
+            app:errorTextAppearance="@style/TextAppearance.SignIn.Error"
+            app:hintTextAppearance="@style/TextAppearance.SignIn.Hint">
+
+            <EditText
+                android:id="@+id/username"
+                style="@style/TextAppearance.SignIn.Input"
+                android:hint="@string/username"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/password_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterEnabled="false"
+            app:errorTextAppearance="@style/TextAppearance.SignIn.Error"
+            app:hintTextAppearance="@style/TextAppearance.SignIn.Hint">
+
+            <EditText
+                android:id="@+id/password"
+                style="@style/TextAppearance.SignIn.Input"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+        <TextView
+            android:id="@+id/sign_in"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/bg_sign_in_button"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/title_sign_in"
+            android:textColor="#FFFF"
+            android:textSize="16sp" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
+        <TextView
+            android:id="@+id/visit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#f000"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <android.support.design.widget.AppBarLayout style="@style/Widget.AppBarLayout">
+
+        <android.support.v7.widget.Toolbar style="@style/Widget.Toolbar">
+
+            <TextView
+                style="@style/Widget.Toolbar.Title"
+                android:text="@string/title_sign_in" />
+
+            <ImageButton
+                android:id="@+id/settings"
+                style="@style/Widget.Toolbar.Button.Navigation"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_nav_settings"
+                tools:ignore="contentDescription" />
+
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+
+</merge>
