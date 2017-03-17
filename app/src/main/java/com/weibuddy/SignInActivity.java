@@ -47,7 +47,7 @@ public class SignInActivity extends AppBaseCompatActivity {
     }
 
     private void setUpViews() {
-    	ImageButton settings = ViewUtils.findViewById(this, R.id.settings);
+        ImageButton settings = ViewUtils.findViewById(this, R.id.settings);
         settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,13 +139,13 @@ public class SignInActivity extends AppBaseCompatActivity {
 
             @Override
             public void onSuccess(User user) {
-                if (user.isSuccessed()) {
+                if (user.isSuccessful()) {
                     SharedPreferencesCompat.with(SignInActivity.this).set(user.id, username, user.name, user.randCode);
 
                     startActivity(new Intent(SignInActivity.this, MainActivity.class));
                     finish();
                 } else {
-                    Toast.makeText(SignInActivity.this, R.string.sign_in_failed, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SignInActivity.this, user.errorMsg, Toast.LENGTH_SHORT).show();
                 }
             }
 

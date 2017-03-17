@@ -16,7 +16,6 @@
     <string name="username_required">请输入账号</string>
     <string name="password_required">请输入密码</string>
     <string name="visit">第一次使用%1$s    访问官网</string>
-    <string name="sign_in_failed">登录失败</string>
 
     <string name="intro">应用简介</string>
     <string name="about">关于我们</string>

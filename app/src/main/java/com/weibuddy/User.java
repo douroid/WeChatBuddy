@@ -1,5 +1,7 @@
 package com.weibuddy;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 public class User {
@@ -12,9 +14,13 @@ public class User {
     public String error;
     @SerializedName("rand_code")
     public String randCode;
+    @SerializedName("error_code")
+    public String errorCode;
+    @SerializedName("msg")
+    public String errorMsg;
 
-    public boolean isSuccessed() {
-        return "ok".equalsIgnoreCase(error);
+    public boolean isSuccessful() {
+        return "ok".equalsIgnoreCase(error) && !TextUtils.isEmpty(id);
     }
 
 }
