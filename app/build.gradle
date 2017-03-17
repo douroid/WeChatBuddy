@@ -19,10 +19,25 @@ android {
         ]
     }
 
+    signingConfigs {
+        releaseConfig {
+            storeFile file('weibuddy.keystore')
+            storePassword 'breaking'
+            keyAlias 'webuddy'
+            keyPassword 'breaking'
+        }
+    }
+
     buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
+        }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
         }
     }
 
