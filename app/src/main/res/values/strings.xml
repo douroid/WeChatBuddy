@@ -6,6 +6,9 @@
     <string name="title_sign_in">登录</string>
     <string name="title_text_preview">文字预览</string>
 
+    <string name="share">分享</string>
+    <string name="settings">设置</string>
+
     <string name="welcome">您好！%1$s</string>
     <string name="date">今天是 yyyy-MM-dd    EEEE</string>
 
