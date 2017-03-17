@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -15,7 +14,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,29 +82,21 @@ public class MainActivity extends AppBaseCompatActivity
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        setUpDaoSession();
-        setUpViews();
+    protected int layout() {
+        return R.layout.activity_main;
     }
 
-    private void setUpDaoSession() {
+    @Override
+    protected void setUpDaoSession() {
         DaoSession daoSession = ((WeiBuddyApp) getApplication()).getDaoSession();
         mFolderDao = daoSession.getFolderDao();
         mCategoryDao = daoSession.getCategoryDao();
         mContentDao = daoSession.getContentDao();
     }
 
-    private void setUpViews() {
-        ImageButton settings = ViewUtils.findViewById(this, R.id.settings);
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SettingsActivity.start(v.getContext());
-            }
-        });
+    @Override
+    protected void setUpViews() {
+        setTitle(R.string.title_main);
 
         mBottomSheetLayout = ViewUtils.findViewById(this, R.id.bottom_sheet_layout);
         mSwipeRefreshLayout = ViewUtils.findViewById(this, R.id.swipe_refresh_layout);
@@ -179,6 +169,21 @@ public class MainActivity extends AppBaseCompatActivity
         Crop.of(source, destination)
                 .asSquare()
                 .start(this, requestCode);
+    }
+
+    @Override
+    protected boolean navigationEnabled() {
+        return false;
+    }
+
+    @Override
+    protected boolean settingsEnabled() {
+        return true;
+    }
+
+    @Override
+    protected void onSettings() {
+        SettingsActivity.start(this);
     }
 
     @Override

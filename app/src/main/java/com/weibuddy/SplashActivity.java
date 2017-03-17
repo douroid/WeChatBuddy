@@ -3,10 +3,11 @@ package com.weibuddy;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import com.weibuddy.util.SharedPreferencesCompat;
 
-public class SplashActivity extends AppBaseCompatActivity
+public class SplashActivity extends AppCompatActivity
         implements Runnable {
 
     private Handler mHandler = new Handler();
@@ -31,7 +32,7 @@ public class SplashActivity extends AppBaseCompatActivity
 
     @Override
     public void run() {
-        if (SharedPreferencesCompat.with(this).isLogined()) {
+        if (SharedPreferencesCompat.with(this).isAuthenticated()) {
             MainActivity.start(this);
         } else {
             SignInActivity.start(this);

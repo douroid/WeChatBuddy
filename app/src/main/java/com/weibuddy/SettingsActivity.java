@@ -4,11 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -39,22 +36,12 @@ public class SettingsActivity extends AppBaseCompatActivity
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
-
-        setUpViews();
+    protected int layout() {
+        return R.layout.activity_settings;
     }
 
-    private void setUpViews() {
-        Toolbar toolbar = ViewUtils.findViewById(this, R.id.toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
+    @Override
+    protected void setUpViews() {
         TextView intro = ViewUtils.findViewById(this, R.id.intro);
         TextView about = ViewUtils.findViewById(this, R.id.about);
         TextView service = ViewUtils.findViewById(this, R.id.service);
@@ -69,10 +56,10 @@ public class SettingsActivity extends AppBaseCompatActivity
         clean.setOnClickListener(this);
         signOut.setOnClickListener(this);
 
-        final boolean isLogined = SharedPreferencesCompat.with(this).isLogined();
-        signOut.setVisibility(isLogined ? View.VISIBLE : View.GONE);
-        password.setVisibility(isLogined ? View.VISIBLE : View.GONE);
-        clean.setVisibility(isLogined ? View.VISIBLE : View.GONE);
+        final boolean isAuthenticated = SharedPreferencesCompat.with(this).isAuthenticated();
+        signOut.setVisibility(isAuthenticated ? View.VISIBLE : View.GONE);
+        password.setVisibility(isAuthenticated ? View.VISIBLE : View.GONE);
+        clean.setVisibility(isAuthenticated ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -258,7 +245,7 @@ public class SettingsActivity extends AppBaseCompatActivity
         Config.resetAvatarFile();
         resetDatabase();
 
-        sendBroadcast(new Intent(ACTION_FINISHED));
+        sendBroadcast(new Intent(InternalIntent.ACTION_FINISHED));
         startActivity(new Intent(SettingsActivity.this, SignInActivity.class));
         finish();
     }

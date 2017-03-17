@@ -2,13 +2,8 @@ package com.weibuddy;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.TextView;
 
 import com.weibuddy.adapter.ContentAdapter;
 import com.weibuddy.dao.ContentDao;
@@ -34,38 +29,25 @@ public class ContentActivity extends AppBaseCompatActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_category);
-
-        setUpArguments();
-        setUpDaoSession();
-        setUpViews();
-        syncLoad();
+    protected int layout() {
+        return R.layout.activity_category;
     }
 
-    private void setUpArguments() {
+    @Override
+    protected void setUpArguments() {
         final Intent intent = getIntent();
         mId = intent.getStringExtra(Intent.EXTRA_UID);
         mType = intent.getStringExtra(Intent.EXTRA_TITLE);
     }
 
-    private void setUpDaoSession() {
+    @Override
+    protected void setUpDaoSession() {
         DaoSession daoSession = ((WeiBuddyApp) getApplication()).getDaoSession();
         mContentDao = daoSession.getContentDao();
     }
 
-    private void setUpViews() {
-        Toolbar toolbar = ViewUtils.findViewById(this, R.id.toolbar);
-        TextView title = ViewUtils.findViewById(this, R.id.title);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
+    @Override
+    protected void setUpViews() {
         String typeName = mType;
         try {
             CategoryEnum categoryEnum = CategoryEnum.valueOf(mType);
@@ -73,7 +55,7 @@ public class ContentActivity extends AppBaseCompatActivity {
         } catch (Exception e) {
             //ignore
         }
-        title.setText(typeName);
+        setTitle(typeName);
 
         RecyclerView recyclerView = ViewUtils.findViewById(this, R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -87,6 +69,13 @@ public class ContentActivity extends AppBaseCompatActivity {
         );
         mAdapter = new ContentAdapter(this);
         recyclerView.setAdapter(mAdapter);
+
+        ViewUtils.addOnGlobalLayoutListener(recyclerView, new Runnable() {
+            @Override
+            public void run() {
+                syncLoad();
+            }
+        });
     }
 
     private void syncLoad() {

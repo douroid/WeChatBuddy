@@ -3,14 +3,11 @@ package com.weibuddy;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,22 +36,12 @@ public class SignInActivity extends AppBaseCompatActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_in);
-
-        setUpViews();
+    protected int layout() {
+        return R.layout.activity_sign_in;
     }
 
-    private void setUpViews() {
-        ImageButton settings = ViewUtils.findViewById(this, R.id.settings);
-        settings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SettingsActivity.start(v.getContext());
-            }
-        });
-
+    @Override
+    protected void setUpViews() {
         mUsernameWrapper = ViewUtils.findViewById(this, R.id.username_wrapper);
         mPasswordWrapper = ViewUtils.findViewById(this, R.id.password_wrapper);
         mSignInButton = ViewUtils.findViewById(this, R.id.sign_in);
@@ -86,6 +73,21 @@ public class SignInActivity extends AppBaseCompatActivity {
             username.setText(name);
             Selection.setSelection(username.getText(), name.length());
         }
+    }
+
+    @Override
+    protected boolean navigationEnabled() {
+        return false;
+    }
+
+    @Override
+    protected boolean settingsEnabled() {
+        return true;
+    }
+
+    @Override
+    protected void onSettings() {
+        SettingsActivity.start(this);
     }
 
     private View.OnClickListener mSignInClick = new View.OnClickListener() {

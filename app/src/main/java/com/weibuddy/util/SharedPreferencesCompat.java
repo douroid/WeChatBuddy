@@ -57,7 +57,7 @@ public class SharedPreferencesCompat {
         return mSharedPrefs.getString(KEY_RAND_CODE, "");
     }
 
-    public boolean isLogined() {
+    public boolean isAuthenticated() {
         return !TextUtils.isEmpty(getUserId()) && !TextUtils.isEmpty(getRandCode());
     }
 

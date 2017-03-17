@@ -2,13 +2,8 @@ package com.weibuddy;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.TextView;
 
 import com.weibuddy.adapter.CategoryAdapter;
 import com.weibuddy.dao.CategoryDao;
@@ -35,38 +30,26 @@ public class CategoryActivity extends AppBaseCompatActivity
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_category);
-
-        setUpArguments();
-        setUpDaoSession();
-        setUpViews();
-        syncLoad();
+    protected int layout() {
+        return R.layout.activity_category;
     }
 
-    private void setUpArguments() {
+    @Override
+    protected void setUpArguments() {
         final Intent intent = getIntent();
         mId = intent.getStringExtra(Intent.EXTRA_UID);
         mTitle = intent.getStringExtra(Intent.EXTRA_TITLE);
     }
 
-    private void setUpDaoSession() {
+    @Override
+    protected void setUpDaoSession() {
         DaoSession daoSession = ((WeiBuddyApp) getApplication()).getDaoSession();
         mCategoryDao = daoSession.getCategoryDao();
     }
 
-    private void setUpViews() {
-        Toolbar toolbar = ViewUtils.findViewById(this, R.id.toolbar);
-        TextView title = ViewUtils.findViewById(this, R.id.title);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        title.setText(mTitle);
+    @Override
+    protected void setUpViews() {
+        setTitle(mTitle);
 
         RecyclerView recyclerView = ViewUtils.findViewById(this, R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -82,6 +65,13 @@ public class CategoryActivity extends AppBaseCompatActivity
         new OnItemTouchListener()
                 .setOnItemClickListener(this)
                 .attachToRecyclerView(recyclerView);
+
+        ViewUtils.addOnGlobalLayoutListener(recyclerView, new Runnable() {
+            @Override
+            public void run() {
+                syncLoad();
+            }
+        });
     }
 
     private void syncLoad() {

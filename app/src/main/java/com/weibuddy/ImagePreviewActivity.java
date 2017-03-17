@@ -3,14 +3,6 @@ package com.weibuddy;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -22,8 +14,6 @@ import com.bumptech.glide.util.Util;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.weibuddy.util.BitmapUtil;
 import com.weibuddy.util.ViewUtils;
 
@@ -34,7 +24,6 @@ import uk.co.senab.photoview.PhotoView;
 
 public class ImagePreviewActivity extends AppBaseCompatActivity {
 
-    private IWXAPI mWXApi;
     private PhotoView mPhotoView;
     private Content mContent;
 
@@ -45,96 +34,86 @@ public class ImagePreviewActivity extends AppBaseCompatActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-        setContentView(R.layout.activity_image_preview);
-
-        setUpArguments();
-        setUpWeChat();
-        setUpViews();
-        render();
+    protected int layout() {
+        return R.layout.activity_image_preview;
     }
 
-    private void setUpArguments() {
+    @Override
+    protected void setUpArguments() {
         final Intent intent = getIntent();
         mContent = intent.getParcelableExtra(Intent.EXTRA_REFERRER);
     }
 
-    private void setUpWeChat() {
-        mWXApi = WXAPIFactory.createWXAPI(this, BuildConfig.APP_KEY_WECHAT, false);
-        mWXApi.registerApp(BuildConfig.APP_KEY_WECHAT);
-    }
+    @Override
+    protected void setUpViews() {
+        setTitle(mContent.getName());
 
-    private void setUpViews() {
-        Toolbar toolbar = ViewUtils.findViewById(this, R.id.toolbar);
-        TextView title = ViewUtils.findViewById(this, R.id.title);
-        ImageButton send = ViewUtils.findViewById(this, R.id.send);
         mPhotoView = ViewUtils.findViewById(this, R.id.photo_view);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        ViewUtils.addOnGlobalLayoutListener(mPhotoView, new Runnable() {
             @Override
-            public void onClick(View v) {
-                finish();
+            public void run() {
+                render();
             }
         });
+    }
 
-        title.setText(mContent.getName());
+    @Override
+    protected boolean shareEnabled() {
+        return true;
+    }
 
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!mWXApi.isWXAppInstalled()) {
-                    Toast.makeText(v.getContext(), R.string.wechat_app_not_installed, Toast.LENGTH_SHORT).show();
-                    return;
-                }
+    @Override
+    protected void onShare() {
+        if (!mWXApi.isWXAppInstalled()) {
+            Toast.makeText(this, R.string.wechat_app_not_installed, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                if (mContent == null) {
-                    Toast.makeText(v.getContext(), R.string.data_is_not_ready, Toast.LENGTH_SHORT).show();
-                    return;
-                }
+        if (mContent == null) {
+            Toast.makeText(this, R.string.data_is_not_ready, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                Glide.with(ImagePreviewActivity.this)
-                        .load(mContent.getContent())
-                        .asBitmap()
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                                if (resource == null) {
-                                    return;
-                                }
+        Glide.with(ImagePreviewActivity.this)
+                .load(mContent.getContent())
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        if (resource == null) {
+                            return;
+                        }
 
-                                int quality = 90;
-                                int realLength = Util.getBitmapByteSize(resource.getWidth(), resource.getHeight(), Bitmap.Config.ARGB_8888);
-                                if (realLength > Config.IMAGE_LENGTH_LIMIT) {
-                                    quality = (int) (Config.IMAGE_LENGTH_LIMIT * 1f / realLength * 100);
-                                }
-                                if (quality < 75) {
-                                    quality = 75;
-                                }
-                                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                                resource.compress(Bitmap.CompressFormat.JPEG, quality, output);
-                                WXImageObject imageObj = new WXImageObject(output.toByteArray());
+                        int quality = 90;
+                        int realLength = Util.getBitmapByteSize(resource.getWidth(), resource.getHeight(), Bitmap.Config.ARGB_8888);
+                        if (realLength > Config.IMAGE_LENGTH_LIMIT) {
+                            quality = (int) (Config.IMAGE_LENGTH_LIMIT * 1f / realLength * 100);
+                        }
+                        if (quality < 75) {
+                            quality = 75;
+                        }
+                        ByteArrayOutputStream output = new ByteArrayOutputStream();
+                        resource.compress(Bitmap.CompressFormat.JPEG, quality, output);
+                        WXImageObject imageObj = new WXImageObject(output.toByteArray());
 
-                                WXMediaMessage msg = new WXMediaMessage();
-                                msg.mediaObject = imageObj;
-                                msg.title = mContent.getName();
+                        WXMediaMessage msg = new WXMediaMessage();
+                        msg.mediaObject = imageObj;
+                        msg.title = mContent.getName();
 
-                                Bitmap thumb = BitmapUtil.createScaledBitmap(resource, 100, true);
-                                output.reset();
-                                thumb.compress(Bitmap.CompressFormat.JPEG, 85, output);
-                                msg.thumbData = output.toByteArray();
+                        Bitmap thumb = BitmapUtil.createScaledBitmap(resource, 100, true);
+                        output.reset();
+                        thumb.compress(Bitmap.CompressFormat.JPEG, 85, output);
+                        msg.thumbData = output.toByteArray();
 
-                                final SendMessageToWX.Req req = new SendMessageToWX.Req();
-                                req.scene = SendMessageToWX.Req.WXSceneSession;
-                                req.message = msg;
-                                req.transaction = String.valueOf(System.currentTimeMillis());
+                        final SendMessageToWX.Req req = new SendMessageToWX.Req();
+                        req.scene = SendMessageToWX.Req.WXSceneSession;
+                        req.message = msg;
+                        req.transaction = String.valueOf(System.currentTimeMillis());
 
-                                mWXApi.sendReq(req);
-                            }
-                        });
-            }
-        });
+                        mWXApi.sendReq(req);
+                    }
+                });
     }
 
     private void render() {

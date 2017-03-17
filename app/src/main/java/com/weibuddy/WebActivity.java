@@ -4,18 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -24,8 +19,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.weibuddy.util.ViewUtils;
 
 import java.lang.ref.WeakReference;
@@ -48,42 +41,27 @@ public class WebActivity extends AppBaseCompatActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web);
-
-        setUpArguments();
-        setUpViews();
+    protected int layout() {
+        return R.layout.activity_web;
     }
 
-    private void setUpArguments() {
+    @Override
+    protected void setUpArguments() {
         final Intent intent = getIntent();
         mIsShowSharing = intent.getBooleanExtra(EXTRA_IS_SHOW_SHARING, false);
         mContent = intent.getParcelableExtra(Intent.EXTRA_REFERRER);
     }
 
-    private void setUpViews() {
-        Toolbar toolbar = ViewUtils.findViewById(this, R.id.toolbar);
-        TextView title = ViewUtils.findViewById(this, R.id.title);
-        ImageButton send = ViewUtils.findViewById(this, R.id.send);
+    @Override
+    protected boolean shareEnabled() {
+        return mIsShowSharing;
+    }
 
+    @Override
+    protected void setUpViews() {
+        setTitle(mContent.getName());
         mProgressBar = ViewUtils.findViewById(this, R.id.progress);
         mWebView = ViewUtils.findViewById(this, R.id.web_view);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        title.setText(mContent.getName());
-        send.setVisibility(mIsShowSharing ? View.VISIBLE : View.GONE);
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                doShare();
-            }
-        });
 
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -118,10 +96,8 @@ public class WebActivity extends AppBaseCompatActivity {
         mWebView.destroy();
     }
 
-    private void doShare() {
-        final IWXAPI mWXApi = WXAPIFactory.createWXAPI(this, BuildConfig.APP_KEY_WECHAT, false);
-        mWXApi.registerApp(BuildConfig.APP_KEY_WECHAT);
-
+    @Override
+    protected void onShare() {
         if (!mWXApi.isWXAppInstalled()) {
             Toast.makeText(this, R.string.wechat_app_not_installed, Toast.LENGTH_SHORT).show();
             return;
