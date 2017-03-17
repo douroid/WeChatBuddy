@@ -86,7 +86,7 @@ public class CategoryActivity extends AppBaseCompatActivity
 
     private void syncLoad() {
         List<Category> categories = mCategoryDao.queryBuilder()
-                .where(CategoryDao.Properties.Fid.eq(mId))
+                .where(CategoryDao.Properties.Fid.eq(mId), CategoryDao.Properties.ChildCount.gt(0))
                 .build()
                 .list();
 
