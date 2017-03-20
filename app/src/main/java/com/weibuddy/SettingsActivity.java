@@ -42,6 +42,7 @@ public class SettingsActivity extends AppBaseCompatActivity
 
     @Override
     protected void setUpViews() {
+        setTitle(R.string.title_settings);
         TextView intro = ViewUtils.findViewById(this, R.id.intro);
         TextView about = ViewUtils.findViewById(this, R.id.about);
         TextView service = ViewUtils.findViewById(this, R.id.service);
