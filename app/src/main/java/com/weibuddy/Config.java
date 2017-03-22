@@ -39,8 +39,6 @@ public final class Config {
     public static final int STATE_FRESH = 1;
     public static final int STATE_NORMAL = 0;
 
-    public static final String SUFFIX_GIF = ".gif";
-
     public static final int IMAGE_LENGTH_LIMIT = 6291456;
 
     public static final String MD5_KEY = "wxB*(@*JDJ1020!&)#1(YUIsdysd";

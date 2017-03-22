@@ -3,29 +3,27 @@ package com.weibuddy;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.util.Util;
-import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.opensdk.modelmsg.WXImageObject;
-import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
-import com.weibuddy.util.BitmapUtil;
 import com.weibuddy.util.ViewUtils;
-
-import java.io.ByteArrayOutputStream;
-import java.util.Locale;
 
 import uk.co.senab.photoview.PhotoView;
 
 public class ImagePreviewActivity extends AppBaseCompatActivity {
 
     private PhotoView mPhotoView;
+    private ProgressBar mProgressBar;
     private Content mContent;
+
+    private Bitmap mResource;
 
     public static void start(Context context, Content content) {
         Intent intent = new Intent(context, ImagePreviewActivity.class);
@@ -49,6 +47,7 @@ public class ImagePreviewActivity extends AppBaseCompatActivity {
         setTitle(mContent.getName());
 
         mPhotoView = ViewUtils.findViewById(this, R.id.photo_view);
+        mProgressBar = ViewUtils.findViewById(this, R.id.progress_bar);
 
         ViewUtils.addOnGlobalLayoutListener(mPhotoView, new Runnable() {
             @Override
@@ -70,69 +69,42 @@ public class ImagePreviewActivity extends AppBaseCompatActivity {
             return;
         }
 
-        if (mContent == null) {
+        if (mContent == null || mResource == null) {
             Toast.makeText(this, R.string.data_is_not_ready, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Glide.with(ImagePreviewActivity.this)
-                .load(mContent.getContent())
-                .asBitmap()
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                        if (resource == null) {
-                            return;
-                        }
-
-                        int quality = 90;
-                        int realLength = Util.getBitmapByteSize(resource.getWidth(), resource.getHeight(), Bitmap.Config.ARGB_8888);
-                        if (realLength > Config.IMAGE_LENGTH_LIMIT) {
-                            quality = (int) (Config.IMAGE_LENGTH_LIMIT * 1f / realLength * 100);
-                        }
-                        if (quality < 75) {
-                            quality = 75;
-                        }
-                        ByteArrayOutputStream output = new ByteArrayOutputStream();
-                        resource.compress(Bitmap.CompressFormat.JPEG, quality, output);
-                        WXImageObject imageObj = new WXImageObject(output.toByteArray());
-
-                        WXMediaMessage msg = new WXMediaMessage();
-                        msg.mediaObject = imageObj;
-                        msg.title = mContent.getName();
-
-                        Bitmap thumb = BitmapUtil.createScaledBitmap(resource, 100, true);
-                        output.reset();
-                        thumb.compress(Bitmap.CompressFormat.JPEG, 85, output);
-                        msg.thumbData = output.toByteArray();
-
-                        final SendMessageToWX.Req req = new SendMessageToWX.Req();
-                        req.scene = SendMessageToWX.Req.WXSceneSession;
-                        req.message = msg;
-                        req.transaction = String.valueOf(System.currentTimeMillis());
-
-                        mWXApi.sendReq(req);
-                    }
-                });
+        new AsyncShareImage(this, mResource, mContent.getName(), mWXApi)
+                .execute();
     }
 
     private void render() {
         final String url = mContent.getContent();
-        if (url.toLowerCase(Locale.getDefault()).endsWith(Config.SUFFIX_GIF)) {
-            Glide.with(this)
-                    .load(url)
-                    .asGif()
-                    .placeholder(R.drawable.bg_default_loading)
-                    .error(R.drawable.bg_default_error)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(mPhotoView);
-        } else {
-            Glide.with(this)
-                    .load(url)
-                    .asBitmap()
-                    .placeholder(R.drawable.bg_default_loading)
-                    .error(R.drawable.bg_default_error)
-                    .into(new BitmapImageViewTarget(mPhotoView));
-        }
+        Glide.with(this)
+                .load(url)
+                .asBitmap()
+                .priority(Priority.HIGH)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .into(new BitmapImageViewTarget(mPhotoView) {
+                    @Override
+                    public void onLoadStarted(Drawable placeholder) {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        super.onLoadStarted(placeholder);
+                    }
+
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        mResource = resource;
+                        super.onResourceReady(resource, glideAnimation);
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                        super.onLoadFailed(e, errorDrawable);
+                        mProgressBar.setVisibility(View.GONE);
+                        Toast.makeText(ImagePreviewActivity.this, R.string.loading_failed, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

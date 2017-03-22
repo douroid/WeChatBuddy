@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
+import org.greenrobot.greendao.annotation.Transient;
 
 @Entity
 public class Content implements Parcelable {
@@ -21,6 +22,9 @@ public class Content implements Parcelable {
     private String fid;
     @Index
     private String cname;
+
+    @Transient
+    private boolean isReady = false;
 
     @Generated(hash = 1153420023)
     public Content(String id, String name, String content, String videoPic,
@@ -121,5 +125,13 @@ public class Content implements Parcelable {
 
     public void setVideoPic(String videoPic) {
         this.videoPic = videoPic;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady(boolean ready) {
+        isReady = ready;
     }
 }

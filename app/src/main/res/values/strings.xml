@@ -37,6 +37,9 @@
 
     <string name="child_count">共%1$d条记录</string>
 
+    <string name="loading">请稍后&#8230;</string>
+
+    <string name="loading_failed">图片加载失败</string>
     <string name="error_io">请求失败，请检查网络连接</string>
     <string name="error_unknown">未知异常，请联系管理员</string>
 

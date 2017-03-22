@@ -1,12 +1,10 @@
 package com.weibuddy.util;
 
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
 
 public class BitmapUtil {
 
     public static Bitmap createScaledBitmap(Bitmap src, int dstSize, boolean filter) {
-        Matrix matrix = new Matrix();
         final int width = src.getWidth();
         final int height = src.getHeight();
 
@@ -17,7 +15,18 @@ public class BitmapUtil {
         final int dstWidth = (int) (width / scale);
         final int dstHeight = (int) (height / scale);
 
-        matrix.setScale(scale, scale);
         return Bitmap.createScaledBitmap(src, dstWidth, dstHeight, filter);
+    }
+
+    public static Bitmap createScaledBitmap(Bitmap resource, int dstSize) {
+        final int width = resource.getWidth();
+        final int height = resource.getHeight();
+
+        float scale = dstSize * 1f / Math.max(width, height);
+
+        final int dstWidth = (int) (width * scale);
+        final int dstHeight = (int) (height * scale);
+
+        return Bitmap.createScaledBitmap(resource, dstWidth, dstHeight, true);
     }
 }
