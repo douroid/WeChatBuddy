@@ -1,6 +1,6 @@
 package com.weibuddy.adapter;
 
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.hannesdorfmann.adapterdelegates3.AdapterDelegate;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
@@ -53,7 +56,7 @@ class ContentDocumentAdapterDelegate extends AdapterDelegate<List<Content>> {
             vh.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    IWXAPI mWXApi = WXAPIFactory.createWXAPI(v.getContext(), BuildConfig.APP_KEY_WECHAT, false);
+                    final IWXAPI mWXApi = WXAPIFactory.createWXAPI(v.getContext(), BuildConfig.APP_KEY_WECHAT, false);
                     mWXApi.registerApp(BuildConfig.APP_KEY_WECHAT);
 
                     if (!mWXApi.isWXAppInstalled()) {
@@ -61,19 +64,28 @@ class ContentDocumentAdapterDelegate extends AdapterDelegate<List<Content>> {
                         return;
                     }
 
-                    WXWebpageObject webPageObj = new WXWebpageObject();
-                    webPageObj.webpageUrl = content.getContent();
+                    Glide.with(v.getContext())
+                            .load(R.mipmap.ic_launcher)
+                            .asBitmap()
+                            .override(100, 100)
+                            .into(new SimpleTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                                    WXWebpageObject webPageObj = new WXWebpageObject();
+                                    webPageObj.webpageUrl = content.getContent();
 
-                    WXMediaMessage msg = new WXMediaMessage();
-                    msg.mediaObject = webPageObj;
-                    msg.title = content.getName();
-                    msg.setThumbImage(BitmapFactory.decodeResource(v.getResources(), R.mipmap.ic_launcher));
+                                    WXMediaMessage msg = new WXMediaMessage();
+                                    msg.mediaObject = webPageObj;
+                                    msg.title = content.getName();
+                                    msg.setThumbImage(resource);
 
-                    SendMessageToWX.Req req = new SendMessageToWX.Req();
-                    req.scene = SendMessageToWX.Req.WXSceneSession;
-                    req.message = msg;
-                    req.transaction = String.valueOf(System.currentTimeMillis());
-                    mWXApi.sendReq(req);
+                                    SendMessageToWX.Req req = new SendMessageToWX.Req();
+                                    req.scene = SendMessageToWX.Req.WXSceneSession;
+                                    req.message = msg;
+                                    req.transaction = String.valueOf(System.currentTimeMillis());
+                                    mWXApi.sendReq(req);
+                                }
+                            });
                 }
             });
         }
